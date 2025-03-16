@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Recommendation System</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input, button { padding: 10px; margin: 5px; }
+        #result { margin-top: 20px; padding: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <h2>Medical Recommendation System</h2>
+    <p>Enter symptoms (comma-separated):</p>
+    <input type="text" id="symptomsInput" placeholder="e.g., itching, skin_rash">
+    <button onclick="predictDisease()">Predict Disease</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function predictDisease() {
+            const symptoms = document.getElementById("symptomsInput").value.split(",").map(s => s.trim());
+            
+            const response = await fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "symptoms": symptoms })
+            });
+
+            const data = await response.json();
+            document.getElementById("result").innerHTML = `
+                <h3>Predicted Disease: ${data.disease}</h3>
+                <p><b>Description:</b> ${data.description}</p>
+                <p><b>Precautions:</b> ${data.precautions.join(", ")}</p>
+                <p><b>Medications:</b> ${data.medications.join(", ")}</p>
+                <p><b>Diet:</b> ${data.diet.join(", ")}</p>
+                <p><b>Workout:</b> ${data.workout.join(", ")}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
